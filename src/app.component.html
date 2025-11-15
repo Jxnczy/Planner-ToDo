@@ -192,9 +192,9 @@
         </div>
       </div>
     </div>
-    
+
     @if(isDraggingTask()) {
-      <div 
+      <div
         class="h-24 flex-shrink-0 border-2 border-dashed border-red-500/50 rounded-lg flex flex-col items-center justify-center text-red-500/70 transition-colors"
         (dragover)="onDragOver($event)"
         (drop)="onTrashDrop($event)"
@@ -210,6 +210,30 @@
         <span class="mt-1 text-sm font-semibold">Delete Task</span>
       </div>
     }
+
+    <section class="flex flex-col gap-3 text-sm">
+      <h2 class="text-xl font-bold text-planner-text">Data & Desktop Tools</h2>
+      <p class="text-xs text-planner-text-dim">
+        Export your plan, import it on another machine, or reset the board when you want a fresh Windows workspace.
+      </p>
+      <div class="flex flex-col gap-2">
+        <button type="button" (click)="exportPlannerState()" class="bg-white/10 border border-white/20 rounded px-3 py-2 text-left hover:bg-white/20 transition-colors">
+          Export planner data (.json)
+        </button>
+        <button type="button" (click)="triggerImportDialog()" class="bg-white/10 border border-white/20 rounded px-3 py-2 text-left hover:bg-white/20 transition-colors">
+          Import planner data
+        </button>
+        <button type="button" (click)="resetPlanner()" class="bg-red-500/10 border border-red-500/40 text-red-200 rounded px-3 py-2 text-left hover:bg-red-500/20 transition-colors">
+          Reset planner
+        </button>
+      </div>
+      <input #fileInput type="file" class="hidden" accept="application/json" (change)="handleFileImport($event)" />
+      @if(importStatus()) {
+        <p class="text-xs" [class.text-green-400]="importStatus()?.type === 'success'" [class.text-red-400]="importStatus()?.type === 'error'">
+          {{ importStatus()?.message }}
+        </p>
+      }
+    </section>
   </aside>
 
   <!-- Toggle Sidebar Button -->

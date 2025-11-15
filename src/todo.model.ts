@@ -27,3 +27,8 @@ export interface DayTasks {
 export interface Week {
   [key: string]: DayTasks;
 }
+
+export interface PlannerState {
+  week: Week;
+  todoPool: Todo[];
+}

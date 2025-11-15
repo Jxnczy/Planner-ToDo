@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, signal, effect } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal, effect, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Todo, Week, CategoryKey, DayTasks } from './todo.model';
+import { Todo, Week, CategoryKey, DayTasks, PlannerState } from './todo.model';
 
 @Component({
   selector: 'app-root',
@@ -11,13 +11,15 @@ import { Todo, Week, CategoryKey, DayTasks } from './todo.model';
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   
   daysOfWeek: string[] = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
   weekDates = signal<string[]>([]);
   week = signal<Week>(this.loadFromLocalStorage<Week>('planner-week') || this.initializeWeek());
-  currentDayIndex = signal<number>(5); // 0:Mon... 5:Sat. Set to Saturday.
+  currentDayIndex = signal<number>(this.determineCurrentDayIndex());
   isSidebarCollapsed = signal(false);
+
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
   // Task Pool State
   newTodoText = signal('');
@@ -45,6 +47,9 @@ export class AppComponent {
   editingTaskText = signal('');
   editingTaskDuration = signal(30);
 
+  importStatus = signal<{ type: 'success' | 'error'; message: string } | null>(null);
+  private importStatusTimeout: ReturnType<typeof setTimeout> | null = null;
+
   constructor() {
     this.calculateWeekDates();
 
@@ -54,6 +59,12 @@ export class AppComponent {
         localStorage.setItem('planner-todoPool', JSON.stringify(this.todoPool()));
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.importStatusTimeout) {
+      clearTimeout(this.importStatusTimeout);
+    }
   }
 
   private loadFromLocalStorage<T>(key: string): T | null {
@@ -74,11 +85,31 @@ export class AppComponent {
 
   private calculateWeekDates(): void {
     const dates: string[] = [];
-    const startDay = 10;
+    const startOfWeek = this.getStartOfWeek(new Date());
     for (let i = 0; i < 7; i++) {
-        dates.push(`November ${startDay + i}`);
+      const currentDate = new Date(startOfWeek);
+      currentDate.setDate(startOfWeek.getDate() + i);
+      dates.push(this.formatDate(currentDate));
     }
     this.weekDates.set(dates);
+  }
+
+  private getStartOfWeek(date: Date): Date {
+    const day = date.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // adjust so week starts on Monday
+    const monday = new Date(date);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(date.getDate() + diff);
+    return monday;
+  }
+
+  private formatDate(date: Date): string {
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  private determineCurrentDayIndex(): number {
+    const today = new Date().getDay();
+    return today === 0 ? 6 : today - 1; // convert Sunday (0) to index 6
   }
 
   private initializeWeek(): Week {
@@ -179,6 +210,113 @@ export class AppComponent {
     }
 
     this.cancelEdit();
+  }
+
+  exportPlannerState(): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+
+    const plannerState: PlannerState = {
+      week: this.week(),
+      todoPool: this.todoPool(),
+    };
+
+    const blob = new Blob([JSON.stringify(plannerState, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `planner-state-${new Date().toISOString().split('T')[0]}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    this.setImportStatus('Planner data exported.', 'success');
+  }
+
+  triggerImportDialog(): void {
+    this.fileInput?.nativeElement.click();
+  }
+
+  handleFileImport(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result as string);
+        if (this.isValidPlannerState(parsed)) {
+          this.week.set(parsed.week);
+          this.todoPool.set(parsed.todoPool);
+          this.setImportStatus('Planner data imported successfully.', 'success');
+        } else {
+          this.setImportStatus('Selected file is not a valid planner export.', 'error');
+        }
+      } catch (e) {
+        console.error('Error importing planner data', e);
+        this.setImportStatus('Unable to read the selected file.', 'error');
+      } finally {
+        input.value = '';
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  resetPlanner(): void {
+    this.week.set(this.initializeWeek());
+    this.todoPool.set([]);
+    this.setImportStatus('Planner reset to a clean slate.', 'success');
+  }
+
+  private isValidPlannerState(data: unknown): data is PlannerState {
+    if (!data || typeof data !== 'object') {
+      return false;
+    }
+    const candidate = data as PlannerState;
+    if (!candidate.week || typeof candidate.week !== 'object' || !Array.isArray(candidate.todoPool)) {
+      return false;
+    }
+
+    const categories: CategoryKey[] = ['goal', 'mustDo', 'prioTask', 'chore', 'events', 'habits'];
+    for (const day of this.daysOfWeek) {
+      const dayTasks = (candidate.week as Week)[day];
+      if (!dayTasks) {
+        return false;
+      }
+      for (const category of categories) {
+        if (!Array.isArray(dayTasks[category])) {
+          return false;
+        }
+        if (!dayTasks[category].every(task => this.isValidTodo(task))) {
+          return false;
+        }
+      }
+    }
+
+    return candidate.todoPool.every(task => this.isValidTodo(task));
+  }
+
+  private isValidTodo(task: unknown): task is Todo {
+    if (!task || typeof task !== 'object') {
+      return false;
+    }
+    const todo = task as Todo;
+    return typeof todo.id === 'number'
+      && typeof todo.text === 'string'
+      && typeof todo.completed === 'boolean'
+      && typeof todo.urgent === 'boolean'
+      && typeof todo.important === 'boolean'
+      && typeof todo.duration === 'number';
+  }
+
+  private setImportStatus(message: string, type: 'success' | 'error'): void {
+    this.importStatus.set({ message, type });
+    if (this.importStatusTimeout) {
+      clearTimeout(this.importStatusTimeout);
+    }
+    this.importStatusTimeout = setTimeout(() => this.importStatus.set(null), 4000);
   }
 
 
