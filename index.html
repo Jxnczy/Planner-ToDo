@@ -1,64 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-g">
-  <title>Weekly Planner & To-Do List</title>
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'planner-background': '#2d2d2d',
-            'planner-surface': '#353535',
-            'planner-task': '#424242',
-            'planner-accent': '#a8b324',
-            'planner-text-dim': '#888888',
-            'planner-text': '#cccccc',
-          }
-        }
-      }
-    }
-  </script>
-<style>
-  @keyframes pop-in {
-    0% {
-      transform: scale(0.5);
-      opacity: 0;
-    }
-    80% {
-      transform: scale(1.1);
-      opacity: 1;
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-  .animate-pop-in {
-    animation: pop-in 0.3s ease-out forwards;
-  }
-</style>
-<script type="importmap">
-{
-  "imports": {
-    "rxjs": "https://aistudiocdn.com/rxjs@^7.8.2?conditions=es2015",
-    "rxjs/operators": "https://aistudiocdn.com/rxjs@^7.8.2/operators?conditions=es2015",
-    "rxjs/ajax": "https://aistudiocdn.com/rxjs@^7.8.2/ajax?conditions=es2015",
-    "rxjs/webSocket": "https://aistudiocdn.com/rxjs@^7.8.2/webSocket?conditions=es2015",
-    "rxjs/testing": "https://aistudiocdn.com/rxjs@^7.8.2/testing?conditions=es2015",
-    "rxjs/fetch": "https://aistudiocdn.com/rxjs@^7.8.2/fetch?conditions=es2015",
-    "@angular/forms": "https://next.esm.sh/@angular/forms@^20.3.12?external=rxjs",
-    "@angular/core": "https://next.esm.sh/@angular/core@^20.3.12?external=rxjs",
-    "@angular/platform-browser": "https://next.esm.sh/@angular/platform-browser@^20.3.12?external=rxjs",
-    "@angular/common": "https://next.esm.sh/@angular/common@^20.3.12?external=rxjs",
-    "@angular/compiler": "https://next.esm.sh/@angular/compiler@^20.3.12?external=rxjs"
-  }
-}
-</script>
+  <title>Weekly Planner & To-Do List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body class="bg-planner-background">
-  <app-root></app-root>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">Weekly focus</p>
+      <h1>Planner &amp; To-Do List</h1>
+      <p id="weekRange" class="muted"></p>
+    </div>
+    <div class="header-actions">
+      <button id="exportButton" class="ghost-button" type="button">Export week</button>
+      <button id="importButton" class="ghost-button" type="button">Import</button>
+      <button id="resetButton" class="danger-button" type="button">Reset data</button>
+      <input type="file" id="importFile" accept="application/json" hidden>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>Add task</h2>
+        <form id="taskForm" class="task-form">
+          <label class="field">
+            <span>Description</span>
+            <input type="text" id="taskText" placeholder="Write a clear action" required>
+          </label>
+          <label class="field">
+            <span>Duration (minutes)</span>
+            <input type="number" id="taskDuration" min="5" max="240" value="30" required>
+          </label>
+          <div class="toggle-row">
+            <label class="checkbox">
+              <input type="checkbox" id="taskUrgent">
+              <span>Urgent</span>
+            </label>
+            <label class="checkbox">
+              <input type="checkbox" id="taskImportant">
+              <span>Important</span>
+            </label>
+          </div>
+          <button class="primary-button" type="submit">Add to pool</button>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Task pool</h2>
+          <p class="muted">Drag tasks into your schedule.</p>
+        </div>
+        <div class="quadrant-grid">
+          <article class="quadrant" data-pool-drop>
+            <h3>Must Do</h3>
+            <p class="muted">Urgent + important</p>
+            <div id="pool-must" class="task-list" data-pool-list></div>
+          </article>
+          <article class="quadrant" data-pool-drop>
+            <h3>Have To</h3>
+            <p class="muted">Important, not urgent</p>
+            <div id="pool-have" class="task-list" data-pool-list></div>
+          </article>
+          <article class="quadrant" data-pool-drop>
+            <h3>Should Do</h3>
+            <p class="muted">Urgent, not important</p>
+            <div id="pool-should" class="task-list" data-pool-list></div>
+          </article>
+          <article class="quadrant" data-pool-drop>
+            <h3>Other</h3>
+            <p class="muted">Neither urgent nor important</p>
+            <div id="pool-other" class="task-list" data-pool-list></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel subtle">
+        <h2>Desktop shortcuts</h2>
+        <ul class="tips">
+          <li>Press <strong>Ctrl/Cmd + S</strong> to bookmark this page.</li>
+          <li>Use the browser menu to install it as an app on Windows.</li>
+          <li>Your data lives in <code>localStorage</code>; export it for backups.</li>
+        </ul>
+      </section>
+
+      <section class="panel trash-drop" data-drop-target="trash">
+        <div>
+          <h2>Trash</h2>
+          <p class="muted">Drop any task here to delete it.</p>
+        </div>
+      </section>
+    </aside>
+
+    <section class="board" aria-live="polite">
+      <div id="weekBoard" class="week-grid"></div>
+    </section>
+  </main>
+
+  <div id="statusToast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <script type="module" src="app.js"></script>
 </body>
 </html>

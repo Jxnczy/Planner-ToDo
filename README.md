@@ -1,29 +1,20 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Weekly Planner & To‑Do List
 
-# Run and deploy your AI Studio app
+A single HTML/CSS/JS page you can double-click from any folder and start planning. No build tools, no frameworks—just a drag-and-drop weekly board that saves to `localStorage`.
 
-This contains everything you need to run your app locally.
+## How to use
 
-View your app in AI Studio: https://ai.studio/apps/drive/1vDISm7PMup_nvmuRkhDMGS90VbIN5hu9
+1. Download or clone this folder.
+2. Open `index.html` directly in your browser (Chrome, Edge, Firefox, Safari all work).
+3. Add tasks in the left column and drag them onto any day/category.
+4. Export your data regularly if you want a backup or to move to another computer.
 
-## Run Locally
+## Features
 
-**Prerequisites:**  Node.js
+- **Task pool** grouped by urgency/importance.
+- **Weekly board** with Goals, Must Do, Priority Tasks, Chores, Events, and Habits for every day.
+- **Drag & drop** between the pool, the board, and the trash.
+- **Local storage** persistence plus JSON export/import and a reset button.
+- **Desktop-friendly** layout; install it as a Progressive Web App (Edge/Chrome → ⋮ menu → “Install app”).
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
-
-## Use it like a Windows desktop tool
-
-The planner runs entirely in the browser, so you can package it like a lightweight desktop utility on Windows:
-
-1. Build the production bundle with `npm run build`.
-2. Serve the compiled `dist/` folder locally (for example with `npx serve dist/weekly-planner-&-to-do-list`).
-3. Open the served URL in Microsoft Edge or Chrome and use the browser's **Install app** option to pin it like a native tool.
-4. Use the new **Data & Desktop Tools** controls in the sidebar to export your schedule as a `.json` file, sync it to another machine, and import it back when needed.
+No `npm install` is required unless you want to host it behind a static server. If you do, any simple HTTP server (`python -m http.server`, `npx serve`, etc.) will work.
