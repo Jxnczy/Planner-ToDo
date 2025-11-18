@@ -1,43 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-g">
+  <meta charset="utf-8">
   <title>Weekly Planner & To-Do List</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="index.css">
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
+        fontFamily: {
+          sans: ['Inter', 'sans-serif'],
+          mono: ['monospace'],
+        },
         extend: {
           colors: {
-            'planner-background': '#2d2d2d',
-            'planner-surface': '#353535',
-            'planner-task': '#424242',
-            'planner-accent': '#a8b324',
-            'planner-text-dim': '#888888',
-            'planner-text': '#cccccc',
+            'planner-bg': '#09090b', /* Zinc 950 */
+            'planner-surface': '#18181b', /* Zinc 900 */
+            'planner-card': '#27272a', /* Zinc 800 */
+            'planner-border': '#3f3f46', /* Zinc 700 */
+            'planner-text': '#e4e4e7', /* Zinc 200 */
+            'planner-text-dim': '#a1a1aa', /* Zinc 400 */
+            
+            /* Modernized Categories */
+            'cat-asap': '#f43f5e', /* Rose 500 */
+            'cat-soon': '#fb923c', /* Orange 400 */
+            'cat-pending': '#facc15', /* Yellow 400 */
+            'cat-offtime': '#818cf8', /* Indigo 400 */
+            'cat-chore': '#38bdf8', /* Sky 400 */
           }
         }
       }
     }
   </script>
 <style>
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+  
   @keyframes pop-in {
-    0% {
-      transform: scale(0.5);
-      opacity: 0;
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
+  .animate-pop-in {
+    animation: pop-in 0.2s ease-out forwards;
+  }
+
+  /* Subtle Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #3f3f46;
+    border-radius: 20px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+  }
+
+  /* Glass Effect helper */
+  .glass-panel {
+    background: rgba(24, 24, 27, 0.7);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255,255,255,0.05);
+  }
+  
+  /* Task Completion Animations */
+  @keyframes card-success {
+    0% { 
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); 
+        border-color: rgba(52, 211, 153, 0.8); 
+        background-color: rgba(52, 211, 153, 0.1); 
     }
-    80% {
-      transform: scale(1.1);
-      opacity: 1;
+    70% { 
+        box-shadow: 0 0 0 15px rgba(52, 211, 153, 0); 
+        border-color: rgba(255, 255, 255, 0.1); /* Reset to default border opacity ish */
+        background-color: #18181b; /* Reset to surface */
     }
-    100% {
-      transform: scale(1);
+    100% { 
+        box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); 
     }
   }
-  .animate-pop-in {
-    animation: pop-in 0.3s ease-out forwards;
+
+  .animate-card-success {
+    animation: card-success 0.6s ease-out;
   }
 </style>
 <script type="importmap">
@@ -58,7 +114,8 @@
 }
 </script>
 </head>
-<body class="bg-planner-background">
+<body class="bg-planner-bg text-planner-text overflow-hidden selection:bg-white/10">
   <app-root></app-root>
+  <script type="module" src="index.js"></script>
 </body>
 </html>

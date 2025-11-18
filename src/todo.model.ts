@@ -5,25 +5,25 @@ export interface Todo {
   urgent: boolean;
   important: boolean;
   duration: number;
+  habit: boolean;
+  sourceId?: number;
 }
 
-export type CategoryKey = 'goal' | 'mustDo' | 'prioTask' | 'chore' | 'events' | 'habits';
-
-export interface Category {
-  key: CategoryKey;
-  label: string;
-  color: string;
-}
+export type CategoryKey = 'goal' | 'focus' | 'core' | 'offTime' | 'chore';
 
 export interface DayTasks {
   goal: Todo[];
-  mustDo: Todo[];
-  prioTask: Todo[];
+  focus: Todo[];
+  core: Todo[];
+  offTime: Todo[];
   chore: Todo[];
-  events: Todo[];
-  habits: Todo[];
 }
 
 export interface Week {
   [key: string]: DayTasks;
 }
+
+export type DropTarget =
+  | { type: 'day'; day: string; category: CategoryKey }
+  | { type: 'pool' }
+  | null;
