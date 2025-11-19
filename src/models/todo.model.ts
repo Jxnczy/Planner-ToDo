@@ -9,7 +9,7 @@ export interface Todo {
   sourceId?: number;
 }
 
-export const CATEGORIES = ['goal', 'focus', 'core', 'offTime', 'chore'] as const;
+export const CATEGORIES = ['goal', 'focus', 'work', 'leisure', 'basics'] as const;
 export type CategoryKey = typeof CATEGORIES[number];
 
 export type DayTasks = {

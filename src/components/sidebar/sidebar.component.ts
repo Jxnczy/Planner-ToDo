@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal, computed } from '@a
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
+import { ThemeService } from '../../services/theme.service';
 import { Todo } from '../../models/todo.model';
 
 @Component({
@@ -13,14 +14,16 @@ import { Todo } from '../../models/todo.model';
 })
 export class SidebarComponent {
   taskService = inject(TaskService);
+  themeService = inject(ThemeService);
 
   // Form State
   newTodoText = signal('');
-  newTaskCategory = signal<'asap' | 'soon' | 'pending' | 'offTime' | 'chore'>('asap');
+  newTaskCategory = signal<'asap' | 'soon' | 'pending' | 'leisure' | 'basics'>('asap');
   taskDuration = signal<number | string>(30);
   
   // UI State
   isDataConfigOpen = signal(false);
+  isThemeMenuOpen = signal(false);
 
   // Computed state for the view
   isOrganizeDisabled = computed(() => {

@@ -17,7 +17,7 @@
 
   <!-- Week Navigation -->
   <header class="flex items-center justify-between px-8 py-6 flex-shrink-0 relative z-20">
-    <button (click)="taskService.navigateWeek(-1)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-planner-surface hover:bg-planner-card border border-white/5 hover:border-white/10 transition-all text-xs font-semibold text-planner-text-dim hover:text-white group">
+    <button (click)="taskService.navigateWeek(-1)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-planner-surface hover:bg-planner-card border border-white/5 hover:border-white/10 transition-all text-sm font-semibold text-planner-text-dim hover:text-white group">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
       PREV
     </button>
@@ -31,18 +31,18 @@
       </div>
     </div>
     
-    <button (click)="taskService.navigateWeek(1)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-planner-surface hover:bg-planner-card border border-white/5 hover:border-white/10 transition-all text-xs font-semibold text-planner-text-dim hover:text-white group">
+    <button (click)="taskService.navigateWeek(1)" class="flex items-center gap-2 px-4 py-2 rounded-full bg-planner-surface hover:bg-planner-card border border-white/5 hover:border-white/10 transition-all text-sm font-semibold text-planner-text-dim hover:text-white group">
       NEXT
       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </button>
   </header>
 
   <!-- Calendar Grid -->
-  <div class="flex flex-grow px-4 pb-6 min-h-0">
+  <div class="flex-grow px-2 pb-6 min-h-0 overflow-x-auto custom-scrollbar">
     <!-- Days Columns -->
-    <div class="flex flex-grow gap-2 overflow-x-auto custom-scrollbar min-w-0">
+    <div class="flex gap-0 h-full min-w-max">
       @for (day of taskService.daysOfWeek; track day; let i = $index) {
-        <div class="w-[220px] flex-shrink-0 h-full">
+        <div class="w-[280px] flex-shrink-0 h-full">
             <app-day-column [day]="day" [dayIndex]="i"></app-day-column>
         </div>
       }

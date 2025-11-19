@@ -79,7 +79,7 @@ export class GeminiService {
       **Rules & Constraints:**
       1.  **Daily Capacity:** Each day has a maximum capacity of 480 minutes (8 hours). Consider the time already scheduled.
       2.  **Prioritization:** Schedule high-priority tasks ('ASAP', 'SOON') earlier in the week (e.g., Monday-Wednesday). Lower priority tasks should be scheduled for later.
-      3.  **Task Categories:** Tasks fit into categories: 'goal', 'focus', 'core', 'offTime'. Place tasks in their corresponding category slots.
+      3.  **Task Categories:** Tasks fit into categories: 'goal', 'focus', 'work', 'leisure'. Place tasks in their corresponding category slots.
       4.  **'Goal' Slot:** The 'goal' category for each day should contain AT MOST ONE task. It is for the day's single most important task.
       5.  **Preserve IDs:** Your output must be a plan that maps original task IDs to a day and category.
       6.  **Unscheduled Tasks:** If a task cannot be scheduled due to capacity limits, simply leave it out of the final plan.
@@ -95,11 +95,11 @@ export class GeminiService {
   }
   
   private getPriority(todo: Todo): string {
-    if (todo.habit) return 'CHORE'; // Chores are not scheduled by this function
+    if (todo.habit) return 'BASICS'; // Basics are not scheduled by this function
     if (todo.urgent && todo.important) return 'ASAP';
     if (!todo.urgent && todo.important) return 'SOON';
     if (todo.urgent && !todo.important) return 'PENDING';
-    return 'OFFTIME';
+    return 'LEISURE';
   }
 
   private createResponseSchema() {
@@ -121,7 +121,7 @@ export class GeminiService {
               category: { 
                 type: Type.STRING, 
                 description: "The category for the task.",
-                enum: ['goal', 'focus', 'core', 'offTime']
+                enum: ['goal', 'focus', 'work', 'leisure']
               }
             },
             required: ['id', 'day', 'category']

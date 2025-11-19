@@ -6,25 +6,41 @@
     <header class="flex items-center justify-between p-6 pb-2">
       <div>
         <h1 class="text-2xl font-bold tracking-tight text-white">Planner</h1>
-        <p class="text-xs text-planner-text-dim font-medium tracking-wide mt-1">ORGANIZE YOUR LIFE</p>
+        <p class="text-sm text-planner-text-dim font-medium tracking-wide mt-1">ORGANIZE YOUR LIFE</p>
       </div>
       
-      <div class="relative">
-        <button (click)="isDataConfigOpen.set(!isDataConfigOpen())" class="p-2 rounded-lg hover:bg-white/5 transition-colors text-planner-text-dim hover:text-white" aria-label="Settings">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-        </button>
-        @if (isDataConfigOpen()) {
-          <div class="absolute top-full right-0 mt-2 w-56 z-50 flex flex-col gap-1 p-1 bg-planner-card border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-pop-in">
-            <button (click)="taskService.exportData()" class="text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Export JSON</button>
-            <div class="relative">
-               <input type="file" id="import-file" (change)="handleImport($event)" class="hidden" accept=".json">
-               <label for="import-file" class="block cursor-pointer text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Import JSON</label>
+      <div class="flex items-center gap-2">
+        <!-- Theme Switcher -->
+        <div class="relative">
+           <button (click)="isThemeMenuOpen.set(!isThemeMenuOpen())" class="p-2 rounded-lg hover:bg-white/5 transition-colors text-planner-text-dim hover:text-white" aria-label="Change Theme">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" /></svg>
+           </button>
+           @if (isThemeMenuOpen()) {
+              <div class="absolute top-full right-0 mt-2 w-40 z-50 flex flex-col gap-1 p-1 bg-planner-card border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-pop-in">
+                 <button (click)="themeService.setTheme('dark')" class="text-left px-4 py-2.5 text-sm rounded-lg transition-colors" [class.bg-white/10]="themeService.theme() === 'dark'" [class.hover:bg-white/5]="themeService.theme() !== 'dark'">DARK MODE</button>
+                 <button (click)="themeService.setTheme('blue')" class="text-left px-4 py-2.5 text-sm rounded-lg transition-colors" [class.bg-white/10]="themeService.theme() === 'blue'" [class.hover:bg-white/5]="themeService.theme() !== 'blue'">BLUE MODE</button>
+              </div>
+           }
+        </div>
+        
+        <!-- Settings -->
+        <div class="relative">
+          <button (click)="isDataConfigOpen.set(!isDataConfigOpen())" class="p-2 rounded-lg hover:bg-white/5 transition-colors text-planner-text-dim hover:text-white" aria-label="Settings">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+          </button>
+          @if (isDataConfigOpen()) {
+            <div class="absolute top-full right-0 mt-2 w-56 z-50 flex flex-col gap-1 p-1 bg-planner-card border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-pop-in">
+              <button (click)="taskService.exportData()" class="text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Export JSON</button>
+              <div class="relative">
+                 <input type="file" id="import-file" (change)="handleImport($event)" class="hidden" accept=".json">
+                 <label for="import-file" class="block cursor-pointer text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Import JSON</label>
+              </div>
+              <div class="h-px bg-white/10 my-1"></div>
+              <button (click)="taskService.resetCurrentWeekTasks()" class="text-left px-4 py-2.5 text-sm text-cat-soon hover:bg-cat-soon/10 rounded-lg transition-colors">Reset Week</button>
+              <button (click)="taskService.deleteAllData()" class="text-left px-4 py-2.5 text-sm text-cat-asap hover:bg-cat-asap/10 rounded-lg transition-colors">Delete All Data</button>
             </div>
-            <div class="h-px bg-white/10 my-1"></div>
-            <button (click)="taskService.resetCurrentWeekTasks()" class="text-left px-4 py-2.5 text-sm text-cat-soon hover:bg-cat-soon/10 rounded-lg transition-colors">Reset Week</button>
-            <button (click)="taskService.deleteAllData()" class="text-left px-4 py-2.5 text-sm text-cat-asap hover:bg-cat-asap/10 rounded-lg transition-colors">Delete All Data</button>
-          </div>
-        }
+          }
+        </div>
       </div>
     </header>
     
@@ -38,23 +54,23 @@
                     'focus:ring-cat-asap': newTaskCategory() === 'asap',
                     'focus:ring-cat-soon': newTaskCategory() === 'soon',
                     'focus:ring-cat-pending': newTaskCategory() === 'pending',
-                    'focus:ring-cat-offtime': newTaskCategory() === 'offTime',
-                    'focus:ring-cat-chore': newTaskCategory() === 'chore',
+                    'focus:ring-cat-leisure': newTaskCategory() === 'leisure',
+                    'focus:ring-cat-basics': newTaskCategory() === 'basics',
                     'focus:ring-planner-text-dim': !newTaskCategory()
                  }"
                  />
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-planner-text-dim bg-planner-surface px-2 py-0.5 rounded border border-white/5">
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-planner-text-dim bg-planner-surface px-2 py-0.5 rounded border border-white/5">
             <input type="number" name="taskDuration" min="1" max="240" [(ngModel)]="taskDuration" class="bg-transparent w-8 text-center focus:outline-none" title="Duration">m
           </div>
         </div>
         
         <div class="flex justify-between gap-1 bg-planner-card/30 p-1 rounded-lg">
            <!-- Category Pills -->
-           <button type="button" (click)="newTaskCategory.set('asap')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'asap' ? 'bg-cat-asap text-white shadow-lg shadow-cat-asap/20' : 'text-planner-text-dim hover:bg-white/5'">ASAP</button>
-           <button type="button" (click)="newTaskCategory.set('soon')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'soon' ? 'bg-cat-soon text-white shadow-lg shadow-cat-soon/20' : 'text-planner-text-dim hover:bg-white/5'">SOON</button>
-           <button type="button" (click)="newTaskCategory.set('pending')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'pending' ? 'bg-cat-pending text-black shadow-lg shadow-cat-pending/20' : 'text-planner-text-dim hover:bg-white/5'">LATER</button>
-           <button type="button" (click)="newTaskCategory.set('offTime')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'offTime' ? 'bg-cat-offtime text-white shadow-lg shadow-cat-offtime/20' : 'text-planner-text-dim hover:bg-white/5'">OFF</button>
-           <button type="button" (click)="newTaskCategory.set('chore')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'chore' ? 'bg-cat-chore text-white shadow-lg shadow-cat-chore/20' : 'text-planner-text-dim hover:bg-white/5'">CHORE</button>
+           <button type="button" (click)="newTaskCategory.set('asap')" class="flex-1 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'asap' ? 'bg-cat-asap text-white shadow-lg shadow-cat-asap/20' : 'text-planner-text-dim hover:bg-white/5'">ASAP</button>
+           <button type="button" (click)="newTaskCategory.set('soon')" class="flex-1 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'soon' ? 'bg-cat-soon text-white shadow-lg shadow-cat-soon/20' : 'text-planner-text-dim hover:bg-white/5'">SOON</button>
+           <button type="button" (click)="newTaskCategory.set('pending')" class="flex-1 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'pending' ? 'bg-cat-pending text-black shadow-lg shadow-cat-pending/20' : 'text-planner-text-dim hover:bg-white/5'">LATER</button>
+           <button type="button" (click)="newTaskCategory.set('leisure')" class="flex-1 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'leisure' ? 'bg-cat-leisure text-white shadow-lg shadow-cat-leisure/20' : 'text-planner-text-dim hover:bg-white/5'">LEISURE</button>
+           <button type="button" (click)="newTaskCategory.set('basics')" class="flex-1 py-1.5 rounded-md text-xs font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'basics' ? 'bg-cat-basics text-white shadow-lg shadow-cat-basics/20' : 'text-planner-text-dim hover:bg-white/5'">BASICS</button>
         </div>
         
         <button type="submit" [disabled]="!newTaskCategory() || !newTodoText().trim()" class="mt-1 w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group">
@@ -66,11 +82,11 @@
     <!-- Task Pool Header -->
     <header class="px-6 pt-2 pb-2 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <h2 class="text-xs font-bold text-planner-text-dim uppercase tracking-widest">Backlog</h2>
+        <h2 class="text-sm font-bold text-planner-text-dim uppercase tracking-widest">Backlog</h2>
         <button 
           (click)="taskService.organizeWeekWithAI()" 
           [disabled]="isOrganizeDisabled()"
-          class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all text-[10px] font-bold disabled:opacity-50 disabled:animate-pulse disabled:cursor-wait"
+          class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all text-xs font-bold disabled:opacity-50 disabled:animate-pulse disabled:cursor-wait"
           title="Use AI to organize your week">
           
           @if(taskService.isOrganizing()) {
@@ -85,7 +101,7 @@
           }
         </button>
       </div>
-      <span class="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-planner-text-dim">{{ taskService.todoPool().length }} tasks</span>
+      <span class="text-xs bg-white/5 px-2 py-0.5 rounded-full text-planner-text-dim">{{ taskService.todoPool().length }} tasks</span>
     </header>
   </div>
   
@@ -96,12 +112,12 @@
       { title: 'High Priority', colorClass: 'text-cat-asap', pool: taskService.asapPool() },
       { title: 'Medium Priority', colorClass: 'text-cat-soon', pool: taskService.soonPool() },
       { title: 'Low Priority', colorClass: 'text-cat-pending', pool: taskService.pendingPool() },
-      { title: 'Downtime', colorClass: 'text-cat-offtime', pool: taskService.offTimePool() },
-      { title: 'Recurring Chores', colorClass: 'text-cat-chore', pool: taskService.choresPool() }
+      { title: 'Leisure', colorClass: 'text-cat-leisure', pool: taskService.offTimePool() },
+      { title: 'Recurring Basics', colorClass: 'text-cat-basics', pool: taskService.basicsPool() }
     ]; track group.title) {
       @if(group.pool.length > 0) {
         <div>
-          <h3 class="text-[10px] font-bold {{group.colorClass}} mb-3 uppercase tracking-widest opacity-80 pl-1">{{group.title}}</h3>
+          <h3 class="text-xs font-bold {{group.colorClass}} mb-3 uppercase tracking-widest opacity-80 pl-1">{{group.title}}</h3>
           <div class="space-y-2" [class.bg-white/5]="isPoolDropTarget()" [class.rounded-xl]="isPoolDropTarget()">
             @for (todo of group.pool; track todo.id) { 
               <div 
@@ -123,7 +139,7 @@
                 } @else {
                   <div class="flex items-center justify-between pl-3">
                     <span class="text-sm text-planner-text font-medium truncate pr-2">{{ todo.text }}</span>
-                    <span class="text-[10px] font-mono text-planner-text-dim bg-planner-surface px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">{{todo.duration}}m</span>
+                    <span class="text-xs font-mono text-planner-text-dim bg-planner-surface px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">{{todo.duration}}m</span>
                   </div>
                 }
               </div> 

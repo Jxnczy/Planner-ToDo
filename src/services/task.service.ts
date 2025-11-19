@@ -69,7 +69,7 @@ export class TaskService {
   pendingPool = computed(() => this.todoPool().filter(t => !t.habit && t.urgent && !t.important));
   offTimePool = computed(() => this.todoPool().filter(t => !t.habit && !t.urgent && !t.important));
   
-  choresPool = computed(() => {
+  basicsPool = computed(() => {
     const allTasksInWeek = Object.values(this.week()).flatMap((day: DayTasks) => Object.values(day).flat());
     const scheduledChoreSourceIds = new Set(allTasksInWeek.filter(task => task.sourceId != null).map(task => task.sourceId));
     return this.todoPool().filter(t => t.habit && !scheduledChoreSourceIds.has(t.id));
@@ -84,10 +84,12 @@ export class TaskService {
         const dayTasks = weekData[day];
         // The total load is calculated based on ALL planned tasks for the day,
         // regardless of their completion status, to reflect the total commitment.
-        // FIX: Explicitly type the accumulator `sum` as `number` to ensure correct type inference for `reduce`.
+        // FIX: Type inference for `task` fails here, resulting in `unknown`. We cast it to `Todo`
+        // to allow accessing its properties. The initial value of `0` ensures the accumulator `sum`
+        // is correctly typed as a number.
         const totalMinutes = Object.values(dayTasks ?? {})
             .flat()
-            .reduce((sum: number, task: Todo) => sum + (task.duration || 0), 0);
+            .reduce((sum, task) => sum + ((task as Todo).duration || 0), 0);
         
         const percentage = this.dailyCapacity > 0 ? Math.min((totalMinutes / this.dailyCapacity) * 100, 100) : 0;
         result[day] = { total: totalMinutes, percentage, color: this.getLoadColor(percentage) };
@@ -124,7 +126,7 @@ export class TaskService {
   }
 
   // Task Management
-  addTodo(text: string, category: 'asap' | 'soon' | 'pending' | 'offTime' | 'chore', duration: number | string): void {
+  addTodo(text: string, category: 'asap' | 'soon' | 'pending' | 'leisure' | 'basics', duration: number | string): void {
     const newTodo: Todo = {
       id: Date.now(),
       text: text.trim(),
@@ -132,7 +134,7 @@ export class TaskService {
       urgent: category === 'asap' || category === 'pending',
       important: category === 'asap' || category === 'soon',
       duration: Number(duration) || 30,
-      habit: category === 'chore',
+      habit: category === 'basics',
     };
     this.todoPool.update(pool => [...pool, newTodo]);
   }
@@ -409,7 +411,7 @@ export class TaskService {
   private initializeWeek(): Week {
     const newWeek: Week = {};
     this.daysOfWeek.forEach(day => {
-      newWeek[day] = { goal: [], focus: [], core: [], offTime: [], chore: [] };
+      newWeek[day] = { goal: [], focus: [], work: [], leisure: [], basics: [] };
     });
     return newWeek;
   }

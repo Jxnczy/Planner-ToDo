@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../../services/task.service';
@@ -19,14 +19,18 @@ export class DayColumnComponent {
   
   readonly categories = CATEGORIES;
 
+  isCurrentDay = computed(() => {
+    return this.taskService.weekOffset() === 0 && this.dayIndex() === this.taskService.currentDayIndex();
+  });
+
   getRemainingSlotsForCategory(category: CategoryKey): number[] {
     const taskCount = this.taskService.week()[this.day()][category].length;
     const minSlots = {
       goal: 1,
       focus: 3,
-      core: 3,
-      offTime: 3,
-      chore: 3
+      work: 3,
+      leisure: 3,
+      basics: 3
     };
     
     // Goal is special: it can only have 1 total. If a task is present, 0 slots remain.

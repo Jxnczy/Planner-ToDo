@@ -21,27 +21,55 @@
         },
         extend: {
           colors: {
-            'planner-bg': '#09090b', /* Zinc 950 */
-            'planner-surface': '#18181b', /* Zinc 900 */
-            'planner-card': '#27272a', /* Zinc 800 */
-            'planner-border': '#3f3f46', /* Zinc 700 */
-            'planner-text': '#e4e4e7', /* Zinc 200 */
-            'planner-text-dim': '#a1a1aa', /* Zinc 400 */
+            'planner-bg': 'var(--color-bg)',
+            'planner-surface': 'var(--color-surface)',
+            'planner-card': 'var(--color-card)',
+            'planner-border': 'var(--color-border)',
+            'planner-text': 'var(--color-text)',
+            'planner-text-dim': 'var(--color-text-dim)',
             
             /* Modernized Categories */
             'cat-asap': '#f43f5e', /* Rose 500 */
             'cat-soon': '#fb923c', /* Orange 400 */
             'cat-pending': '#facc15', /* Yellow 400 */
-            'cat-offtime': '#818cf8', /* Indigo 400 */
-            'cat-chore': '#38bdf8', /* Sky 400 */
+            'cat-leisure': '#818cf8', /* Indigo 400 */
+            'cat-basics': '#38bdf8', /* Sky 400 */
           }
         }
       }
     }
   </script>
 <style>
+  /* Base variables for the blue theme (slate) */
+  :root, .theme-blue {
+    --color-bg: #0f172a;
+    --color-surface: #1e293b;
+    --color-card: #334155;
+    --color-border: #475569;
+    --color-text: #e2e8f0;
+    --color-text-dim: #94a3b8;
+    --glass-panel-bg: rgba(30, 41, 59, 0.7);
+    --scrollbar-thumb: #475569;
+    --scrollbar-thumb-hover: #64748b;
+  }
+  
+  /* Variables for the original dark theme (zinc) */
+  .theme-dark {
+    --color-bg: #18181b;
+    --color-surface: #27272a;
+    --color-card: #3f3f46;
+    --color-border: #52525b;
+    --color-text: #e4e4e7;
+    --color-text-dim: #a1a1aa;
+    --glass-panel-bg: rgba(39, 39, 42, 0.7);
+    --scrollbar-thumb: #52525b;
+    --scrollbar-thumb-hover: #71717a;
+  }
+
   body {
     font-family: 'Inter', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
   
   @keyframes pop-in {
@@ -56,7 +84,7 @@
   /* Custom Scrollbar - Cross-browser */
   .custom-scrollbar {
     scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #3f3f46 transparent; /* For Firefox */
+    scrollbar-color: var(--scrollbar-thumb) transparent; /* For Firefox */
   }
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
@@ -66,16 +94,16 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #3f3f46;
+    background: var(--scrollbar-thumb);
     border-radius: 20px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #52525b;
+    background: var(--scrollbar-thumb-hover);
   }
 
   /* Glass Effect helper */
   .glass-panel {
-    background: rgba(24, 24, 27, 0.7);
+    background: var(--glass-panel-bg);
     backdrop-filter: blur(12px);
     border-right: 1px solid rgba(255,255,255,0.05);
   }

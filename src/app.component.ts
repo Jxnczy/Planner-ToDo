@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angul
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { WeekGridComponent } from './components/week-grid/week-grid.component';
 import { TaskService } from './services/task.service';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { TaskService } from './services/task.service';
 })
 export class AppComponent {
   private taskService = inject(TaskService);
+  private themeService = inject(ThemeService); // Inject to initialize
 
   @HostListener('document:dragend')
   onDragEnd(): void {
