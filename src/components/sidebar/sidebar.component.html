@@ -1,0 +1,143 @@
+<!-- Left Sidebar: Brain Dump & Task Pool -->
+<aside class="w-[300px] h-full flex-shrink-0 flex flex-col glass-panel z-20">
+  <!-- Non-scrolling container -->
+  <div class="flex-shrink-0">
+    <!-- Header -->
+    <header class="flex items-center justify-between p-6 pb-2">
+      <div>
+        <h1 class="text-2xl font-bold tracking-tight text-white">Planner</h1>
+        <p class="text-xs text-planner-text-dim font-medium tracking-wide mt-1">ORGANIZE YOUR LIFE</p>
+      </div>
+      
+      <div class="relative">
+        <button (click)="isDataConfigOpen.set(!isDataConfigOpen())" class="p-2 rounded-lg hover:bg-white/5 transition-colors text-planner-text-dim hover:text-white" aria-label="Settings">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+        </button>
+        @if (isDataConfigOpen()) {
+          <div class="absolute top-full right-0 mt-2 w-56 z-50 flex flex-col gap-1 p-1 bg-planner-card border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-pop-in">
+            <button (click)="taskService.exportData()" class="text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Export JSON</button>
+            <div class="relative">
+               <input type="file" id="import-file" (change)="handleImport($event)" class="hidden" accept=".json">
+               <label for="import-file" class="block cursor-pointer text-left px-4 py-2.5 text-sm text-planner-text hover:bg-white/5 rounded-lg transition-colors">Import JSON</label>
+            </div>
+            <div class="h-px bg-white/10 my-1"></div>
+            <button (click)="taskService.resetCurrentWeekTasks()" class="text-left px-4 py-2.5 text-sm text-cat-soon hover:bg-cat-soon/10 rounded-lg transition-colors">Reset Week</button>
+            <button (click)="taskService.deleteAllData()" class="text-left px-4 py-2.5 text-sm text-cat-asap hover:bg-cat-asap/10 rounded-lg transition-colors">Delete All Data</button>
+          </div>
+        }
+      </div>
+    </header>
+    
+    <!-- New Task Input -->
+    <div class="px-6 py-4">
+      <form (submit)="$event.preventDefault(); addTodo()" class="flex flex-col gap-3">
+        <div class="relative group">
+          <input type="text" name="newTodoText" [(ngModel)]="newTodoText" placeholder="What needs to be done?" 
+                 class="w-full bg-planner-card/50 border border-transparent rounded-xl px-4 py-3 text-sm focus:outline-none focus:bg-planner-card focus:ring-1 transition-all duration-300"
+                 [class]="{
+                    'focus:ring-cat-asap': newTaskCategory() === 'asap',
+                    'focus:ring-cat-soon': newTaskCategory() === 'soon',
+                    'focus:ring-cat-pending': newTaskCategory() === 'pending',
+                    'focus:ring-cat-offtime': newTaskCategory() === 'offTime',
+                    'focus:ring-cat-chore': newTaskCategory() === 'chore',
+                    'focus:ring-planner-text-dim': !newTaskCategory()
+                 }"
+                 />
+          <div class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-planner-text-dim bg-planner-surface px-2 py-0.5 rounded border border-white/5">
+            <input type="number" name="taskDuration" min="1" max="240" [(ngModel)]="taskDuration" class="bg-transparent w-8 text-center focus:outline-none" title="Duration">m
+          </div>
+        </div>
+        
+        <div class="flex justify-between gap-1 bg-planner-card/30 p-1 rounded-lg">
+           <!-- Category Pills -->
+           <button type="button" (click)="newTaskCategory.set('asap')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'asap' ? 'bg-cat-asap text-white shadow-lg shadow-cat-asap/20' : 'text-planner-text-dim hover:bg-white/5'">ASAP</button>
+           <button type="button" (click)="newTaskCategory.set('soon')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'soon' ? 'bg-cat-soon text-white shadow-lg shadow-cat-soon/20' : 'text-planner-text-dim hover:bg-white/5'">SOON</button>
+           <button type="button" (click)="newTaskCategory.set('pending')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'pending' ? 'bg-cat-pending text-black shadow-lg shadow-cat-pending/20' : 'text-planner-text-dim hover:bg-white/5'">LATER</button>
+           <button type="button" (click)="newTaskCategory.set('offTime')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'offTime' ? 'bg-cat-offtime text-white shadow-lg shadow-cat-offtime/20' : 'text-planner-text-dim hover:bg-white/5'">OFF</button>
+           <button type="button" (click)="newTaskCategory.set('chore')" class="flex-1 py-1.5 rounded-md text-[10px] font-bold tracking-wider transition-all duration-200" [class]="newTaskCategory() === 'chore' ? 'bg-cat-chore text-white shadow-lg shadow-cat-chore/20' : 'text-planner-text-dim hover:bg-white/5'">CHORE</button>
+        </div>
+        
+        <button type="submit" [disabled]="!newTaskCategory() || !newTodoText().trim()" class="mt-1 w-full bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group">
+           <span class="group-hover:scale-110 transition-transform">+</span> Add Task
+        </button>
+      </form>
+    </div>
+
+    <!-- Task Pool Header -->
+    <header class="px-6 pt-2 pb-2 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h2 class="text-xs font-bold text-planner-text-dim uppercase tracking-widest">Backlog</h2>
+        <button 
+          (click)="taskService.organizeWeekWithAI()" 
+          [disabled]="isOrganizeDisabled()"
+          class="flex items-center gap-1.5 px-2 py-1 rounded-md bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 text-indigo-400 transition-all text-[10px] font-bold disabled:opacity-50 disabled:animate-pulse disabled:cursor-wait"
+          title="Use AI to organize your week">
+          
+          @if(taskService.isOrganizing()) {
+            <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Organizing...</span>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.256 9a1 1 0 010 1.998l-3.11 1.802L13.033 17.256a1 1 0 01-1.998 0l-1.802-3.11L6 12.256a1 1 0 010-1.998l3.11-1.802L11.033 2.744A1 1 0 0112 2z" clip-rule="evenodd" /></svg>
+            <span>Magic Organize</span>
+          }
+        </button>
+      </div>
+      <span class="text-[10px] bg-white/5 px-2 py-0.5 rounded-full text-planner-text-dim">{{ taskService.todoPool().length }} tasks</span>
+    </header>
+  </div>
+  
+  <!-- Task Pool Scrollable Area -->
+  <div class="flex-grow min-h-0 overflow-y-auto custom-scrollbar px-6 pb-6 space-y-6" (dragover)="$event.preventDefault()" (drop)="taskService.onPoolDrop()" (dragenter)="taskService.onDragEnter({ type: 'pool' })">
+    
+    @for(group of [
+      { title: 'High Priority', colorClass: 'text-cat-asap', pool: taskService.asapPool() },
+      { title: 'Medium Priority', colorClass: 'text-cat-soon', pool: taskService.soonPool() },
+      { title: 'Low Priority', colorClass: 'text-cat-pending', pool: taskService.pendingPool() },
+      { title: 'Downtime', colorClass: 'text-cat-offtime', pool: taskService.offTimePool() },
+      { title: 'Recurring Chores', colorClass: 'text-cat-chore', pool: taskService.choresPool() }
+    ]; track group.title) {
+      @if(group.pool.length > 0) {
+        <div>
+          <h3 class="text-[10px] font-bold {{group.colorClass}} mb-3 uppercase tracking-widest opacity-80 pl-1">{{group.title}}</h3>
+          <div class="space-y-2" [class.bg-white/5]="isPoolDropTarget()" [class.rounded-xl]="isPoolDropTarget()">
+            @for (todo of group.pool; track todo.id) { 
+              <div 
+                class="relative group bg-planner-card border border-white/5 rounded-lg p-3 shadow-sm cursor-move transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 hover:border-white/10"
+                [class.opacity-40]="isPoolTaskBeingDragged(todo)"
+                [draggable]="taskService.editingTaskId() !== todo.id" 
+                (dragstart)="taskService.editingTaskId() !== todo.id && onPoolDragStart($event, todo)" 
+                (dblclick)="taskService.editingTaskId() !== todo.id && taskService.startEdit(todo)"
+                role="button" tabindex="0">
+                
+                <div class="absolute left-0 top-3 bottom-3 w-1 rounded-r {{group.colorClass}} bg-current opacity-60"></div>
+
+                @if(taskService.editingTaskId() === todo.id) { 
+                  <div class="flex items-center gap-2 pl-2">
+                     <input type="text" [(ngModel)]="taskService.editingTaskText" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="flex-grow bg-planner-bg rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-white/20" autoFocus>
+                     <input type="number" [(ngModel)]="taskService.editingTaskDuration" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="w-12 bg-planner-bg rounded px-1 py-1 text-sm text-center focus:outline-none focus:ring-1 focus:ring-white/20">
+                     <button (click)="taskService.saveEdit()" class="text-emerald-400 hover:text-emerald-300"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></button>
+                  </div>
+                } @else {
+                  <div class="flex items-center justify-between pl-3">
+                    <span class="text-sm text-planner-text font-medium truncate pr-2">{{ todo.text }}</span>
+                    <span class="text-[10px] font-mono text-planner-text-dim bg-planner-surface px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">{{todo.duration}}m</span>
+                  </div>
+                }
+              </div> 
+            }
+          </div>
+        </div>
+      }
+    }
+    
+    @if(taskService.todoPool().length === 0) {
+      <div class="flex flex-col items-center justify-center h-40 text-planner-text-dim opacity-50">
+        <svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+        <p class="text-sm">All tasks scheduled!</p>
+      </div>
+    }
+  </div>
+</aside>
