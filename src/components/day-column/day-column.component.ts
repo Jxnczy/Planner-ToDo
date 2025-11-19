@@ -1,3 +1,4 @@
+
 import { ChangeDetectionStrategy, Component, inject, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -30,7 +31,7 @@ export class DayColumnComponent {
       focus: 3,
       work: 3,
       leisure: 3,
-      basics: 3
+      basics: 4
     };
     
     // Goal is special: it can only have 1 total. If a task is present, 0 slots remain.

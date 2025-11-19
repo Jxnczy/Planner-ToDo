@@ -84,12 +84,11 @@ export class TaskService {
         const dayTasks = weekData[day];
         // The total load is calculated based on ALL planned tasks for the day,
         // regardless of their completion status, to reflect the total commitment.
-        // FIX: Type inference for `task` fails here, resulting in `unknown`. We cast it to `Todo`
-        // to allow accessing its properties. The initial value of `0` ensures the accumulator `sum`
-        // is correctly typed as a number.
-        const totalMinutes = Object.values(dayTasks ?? {})
-            .flat()
-            .reduce((sum, task) => sum + ((task as Todo).duration || 0), 0);
+        // FIX: The original calculation for totalMinutes was causing type errors.
+        // This is likely due to an issue with `.flat()` type inference.
+        // The logic is replaced with a more robust flattening method to ensure correct type inference.
+        const allDayTasks: Todo[] = [].concat(...Object.values(dayTasks ?? {}));
+        const totalMinutes = allDayTasks.reduce((sum, task) => sum + (task.duration || 0), 0);
         
         const percentage = this.dailyCapacity > 0 ? Math.min((totalMinutes / this.dailyCapacity) * 100, 100) : 0;
         result[day] = { total: totalMinutes, percentage, color: this.getLoadColor(percentage) };

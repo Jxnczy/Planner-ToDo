@@ -1,3 +1,4 @@
+
 <!-- Main Content: Weekly Planner -->
 <main class="flex flex-col flex-grow relative z-10">
   <!-- Top Decoration -->
@@ -23,11 +24,11 @@
     </button>
     
     <div class="flex flex-col items-center">
-      <h2 class="text-xl font-bold tracking-tight text-white">
+      <h2 class="text-3xl font-bold tracking-tight text-white">
         Week {{ taskService.currentWeekKey().split('-W')[1] }}
       </h2>
       <div class="flex items-center gap-2 mt-1">
-        <span class="text-sm font-medium text-planner-text-dim">{{ taskService.weekDateRange() }}</span>
+        <span class="text-base font-medium text-planner-text-dim">{{ taskService.weekDateRange() }}</span>
       </div>
     </div>
     

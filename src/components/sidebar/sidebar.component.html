@@ -1,3 +1,4 @@
+
 <!-- Left Sidebar: Brain Dump & Task Pool -->
 <aside class="w-[300px] h-full flex-shrink-0 flex flex-col glass-panel z-20">
   <!-- Non-scrolling container -->
@@ -132,13 +133,13 @@
 
                 @if(taskService.editingTaskId() === todo.id) { 
                   <div class="flex items-center gap-2 pl-2">
-                     <input type="text" [(ngModel)]="taskService.editingTaskText" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="flex-grow bg-planner-bg rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-white/20" autoFocus>
-                     <input type="number" [(ngModel)]="taskService.editingTaskDuration" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="w-12 bg-planner-bg rounded px-1 py-1 text-sm text-center focus:outline-none focus:ring-1 focus:ring-white/20">
+                     <input type="text" [(ngModel)]="taskService.editingTaskText" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="flex-grow bg-planner-bg rounded px-2 py-1 text-base focus:outline-none focus:ring-1 focus:ring-white/20" autoFocus>
+                     <input type="number" [(ngModel)]="taskService.editingTaskDuration" (keydown.enter)="taskService.saveEdit()" (keydown.escape)="taskService.cancelEdit()" class="w-12 bg-planner-bg rounded px-1 py-1 text-base text-center focus:outline-none focus:ring-1 focus:ring-white/20">
                      <button (click)="taskService.saveEdit()" class="text-emerald-400 hover:text-emerald-300"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></button>
                   </div>
                 } @else {
                   <div class="flex items-center justify-between pl-3">
-                    <span class="text-sm text-planner-text font-medium truncate pr-2">{{ todo.text }}</span>
+                    <span class="text-base text-planner-text font-medium truncate pr-2">{{ todo.text }}</span>
                     <span class="text-xs font-mono text-planner-text-dim bg-planner-surface px-1.5 py-0.5 rounded border border-white/5 whitespace-nowrap">{{todo.duration}}m</span>
                   </div>
                 }
